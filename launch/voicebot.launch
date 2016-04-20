@@ -1,0 +1,8 @@
+<launch>
+    <node name="recognizer" pkg="pocketsphinx" type="recognizer.py">
+        <param name="lm" value="$(find voicebot)/language_model.lm" />
+        <param name="dict" value="$(find voicebot)/dionctionary.dic" />
+    </node>
+
+    <node name="voicebot" pkg="voicebot" type="move_base_voice.py" output="screen" />
+</launch>
