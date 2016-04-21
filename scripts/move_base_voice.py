@@ -33,13 +33,14 @@ class move_base_voice:
             if len(splitreq) < 2:
                 return
 
+            has_direction = splitreq[1] == "backward" or splitreq[1] == "forward"
             negate = splitreq[1] == "backward"
             dist_meters = 3
 
-            if len(splitreq) > 2:
-                sliceStart = 2 if (splitreq[1] == "backward" or splitreq[1] == "forward") else 1
+            if (not has_direction) or len(splitreq) > 2:
+                slice_start = 2 if has_direction else 1
 
-                dist, unitIndex = move_base_voice.tryParseNumber(splitreq[sliceStart:])
+                dist, unitIndex = move_base_voice.try_parse_number(splitreq[slice_start:])
 
                 if unitIndex >= len(splitreq):
                     unit = "meters"
@@ -63,13 +64,14 @@ class move_base_voice:
             if len(splitreq) < 2:
                 return
 
+            has_direction = splitreq[1] == "right" or splitreq[1] == "left"
             negate = splitreq[1] == "right"
             angle_rad = math.pi / 2.0
 
-            if len(splitreq) > 2:
-                sliceStart = 2 if (splitreq[1] == "left" or splitreq[1] == "right") else 1
+            if (not has_direction) or len(splitreq) > 2:
+                slice_start = 2 if has_direction else 1
 
-                angle, unitIndex = move_base_voice.tryParseNumber(splitreq[sliceStart:])
+                angle, unitIndex = move_base_voice.try_parse_number(splitreq[slice_start:])
 
                 if unitIndex >= len(splitreq):
                     unit = "degrees"
@@ -108,7 +110,7 @@ class move_base_voice:
         goalQueue.clear()
 
     @staticmethod
-    def tryParseNumber(nums):
+    def try_parse_number(nums):
         """
         Tries to take a list of words and turn it into an actual number.
         Drawn from https://stackoverflow.com/a/493788
@@ -129,12 +131,12 @@ class move_base_voice:
             for idx, word in enumerate(tens): numwords[word] = (1, idx * 10)
             for idx, word in enumerate(scales): numwords[word] = (10 ** (idx * 3 or 2), 0)
 
-        sliceTarget = len(nums)
+        slice_target = len(nums)
         for i in xrange(0, len(nums)):
             if not nums[i] in numwords:
-                sliceTarget = i
+                slice_target = i
 
-        slice = nums[:sliceTarget]
+        slice = nums[:slice_target]
 
         result = current = 0
         for word in slice:
@@ -144,7 +146,7 @@ class move_base_voice:
                 result += current
                 current = 0
 
-        return (result + current, sliceTarget)
+        return result + current, slice_target
 
 if __name__ == '__main__':
     rospy.init_node('move_base_voice')
