@@ -78,10 +78,10 @@ class move_base_voice:
                 else: unit = splitreq[unitIndex]
 
                 if unit == "degree" or unit == "degrees":
-                    angle_rad = math.degrees(angle)
+                    angle_rad = math.radians(angle)
                 else: angle_rad = angle
 
-            q = tf.transformations.quaternion_from_euler(0, angle_rad * (-1 if negate else 1), 0)
+            q = tf.transformations.quaternion_from_euler(0, 0, angle_rad * (-1 if negate else 1))
             g = MoveBaseGoal()
             g.target_pose.pose.orientation.x = q[0]
             g.target_pose.pose.orientation.y = q[1]
