@@ -90,21 +90,21 @@ class move_base_voice:
             goalQueue.append(g)
         elif splitreq[0] == "dance":
             for i in xrange(0, 4):
-                self.speechCb(String("turn left 90 degrees"))
-                self.speechCb(String("turn right 90 degrees"))
-                self.speechCb(String("turn right 90 degrees"))
-                self.speechCb(String("turn left 90 degrees"))
+                self.speechCb(String("turn left ninety degrees"))
+                self.speechCb(String("turn right ninety degrees"))
+                self.speechCb(String("turn right ninety degrees"))
+                self.speechCb(String("turn left ninety degrees"))
 
                 self.speechCb(String("move backward"))
                 self.speechCb(String("move forward"))
 
-                self.speechCb(String("turn left 90 degrees"))
+                self.speechCb(String("turn left ninety degrees"))
         elif splitreq[0] == "stop":
             # immediately clear the queue so everything stops executing
             goalQueue.clear()
         elif splitreq[0] == "spin":
             for i in xrange(0, 100):
-                self.speechCb(String("turn left 360 degrees"))
+                self.speechCb(String("turn left three hundred sixty degrees"))
 
     def cleanup(self):
         goalQueue.clear()
