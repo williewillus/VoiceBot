@@ -57,7 +57,9 @@ class move_base_voice:
                     dist_meters = dist
 
             g = MoveBaseGoal()
-            g.target_pose.pose.position.x = dist_meters * (-1 if negate else 1)
+            if negate:
+                self.speechCb(String("turn left one hundred eighty degrees"))
+            g.target_pose.pose.position.x = dist_meters
             goalQueue.append(g)
 
         elif splitreq[0] == "turn":
