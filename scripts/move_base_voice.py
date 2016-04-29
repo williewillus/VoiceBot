@@ -137,6 +137,7 @@ class move_base_voice:
         for i in xrange(0, len(nums)):
             if not nums[i] in numwords:
                 slice_target = i
+                break
 
         slice = nums[:slice_target]
 
