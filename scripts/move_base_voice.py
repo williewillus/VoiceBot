@@ -157,7 +157,7 @@ if __name__ == '__main__':
         move_base_voice()
         client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         # client.wait_for_server()
-        while not rospy.is_shutdown() and len(goalQueue) != 0:
+        while not rospy.is_shutdown():
             try:
                 g = goalQueue.popleft()
                 client.send_goal(g)
