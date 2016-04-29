@@ -159,6 +159,8 @@ if __name__ == '__main__':
         # client.wait_for_server()
         while not rospy.is_shutdown():
             try:
+                if len(goalQueue) == 0:
+                    continue
                 g = goalQueue.popleft()
                 client.send_goal(g)
                 client.wait_for_result(rospy.Duration.from_sec(2.0))
