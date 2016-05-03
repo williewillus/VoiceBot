@@ -13,10 +13,12 @@ import tf
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 goalQueue = collections.deque()
+turtleQueue = collections.deque()
 numwords = {}
 
 # based on voice_cmd_vel
 class move_base_voice:
+
     def __init__(self):
         rospy.on_shutdown(self.cleanup)
         rospy.Subscriber('recognizer/output', String, self.speechCb)
@@ -59,10 +61,14 @@ class move_base_voice:
             if negate:
                 self.speechCb(String("turn left one hundred eighty degrees"))
             g = MoveBaseGoal()
-	    g.target_pose.header.stamp = rospy.Time.now()
-	    g.target_pose.header.frame_id = "/base_link"
+            g.target_pose.header.stamp = rospy.Time.now()
+            g.target_pose.header.frame_id = "/base_link"
             g.target_pose.pose.position.x = dist_meters
             goalQueue.append(g)
+
+            t = Twist()
+            t.linear.x = dist_meters
+            turtleQueue.append(t)
 
         elif splitreq[0] == "turn":
             if len(splitreq) < 2:
@@ -87,13 +93,18 @@ class move_base_voice:
 
             q = tf.transformations.quaternion_from_euler(0, 0, angle_rad * (-1 if negate else 1))
             g = MoveBaseGoal()
-	    g.target_pose.header.stamp = rospy.Time.now()
-	    g.target_pose.header.frame_id = "/base_link"
+            g.target_pose.header.stamp = rospy.Time.now()
+            g.target_pose.header.frame_id = "/base_link"
             g.target_pose.pose.orientation.x = q[0]
             g.target_pose.pose.orientation.y = q[1]
             g.target_pose.pose.orientation.z = q[2]
             g.target_pose.pose.orientation.w = q[3]
             goalQueue.append(g)
+
+            t = Twist()
+            t.angular.y = angle_rad * (-1 if negate else 1)
+
+
         elif splitreq[0] == "dance":
             for i in xrange(0, 4):
                 self.speechCb(String("turn left ninety degrees"))
@@ -161,6 +172,8 @@ if __name__ == '__main__':
         move_base_voice()
         client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         client.wait_for_server()
+        turtle_pub = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
+
         while not rospy.is_shutdown():
             try:
                 if len(goalQueue) == 0:
@@ -168,6 +181,13 @@ if __name__ == '__main__':
                 g = goalQueue.popleft()
                 client.send_goal(g)
                 client.wait_for_result(rospy.Duration.from_sec(2.0))
+            except IndexError:
+                pass
+            try:
+                if len(turtleQueue) == 0:
+                    continue
+                twist = turtleQueue.popleft()
+                turtle_pub.publish(twist)
             except IndexError:
                 pass
     except rospy.ROSInterruptException:
