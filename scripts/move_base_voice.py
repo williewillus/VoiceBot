@@ -63,7 +63,7 @@ class move_base_voice:
             g = MoveBaseGoal()
             g.target_pose.header.stamp = rospy.Time.now()
             g.target_pose.header.frame_id = "/base_link"
-            g.target_pose.pose.position.x = dist_meters
+            g.target_pose.pose.position.x = float(dist_meters)
             goalQueue.append(g)
 
             t = Twist()
