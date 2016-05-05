@@ -60,10 +60,15 @@ class move_base_voice:
 
             if negate:
                 self.speechCb(String("turn left one hundred eighty degrees"))
+            q = tf.transformations.quaternion_from_euler(0, 0, 0)
             g = MoveBaseGoal()
             g.target_pose.header.stamp = rospy.Time.now()
             g.target_pose.header.frame_id = "/base_link"
             g.target_pose.pose.position.x = float(dist_meters)
+            g.target_pose.pose.orientation.x = q[0]
+            g.target_pose.pose.orientation.y = q[1]
+            g.target_pose.pose.orientation.z = q[2]
+            g.target_pose.pose.orientation.w = q[3]
             goalQueue.append(g)
 
             t = Twist()
