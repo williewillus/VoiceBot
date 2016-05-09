@@ -9,12 +9,14 @@ import roslib
 roslib.load_manifest('move_base')
 import actionlib
 import tf
+import re
 
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 goalQueue = collections.deque()
 turtleQueue = collections.deque()
 numwords = {}
+pattern = re.compile("and|then")
 
 # based on voice_cmd_vel
 class move_base_voice:
@@ -29,6 +31,12 @@ class move_base_voice:
         splitreq = msg.data.split()
 
         if len(splitreq) == 0:
+            return
+
+        if ("and" in splitreq or "then" in splitreq):
+            splits = pattern.split("then|and")
+            for s in splits:
+                self.speechCb(s)
             return
 
         if splitreq[0] == "move":
