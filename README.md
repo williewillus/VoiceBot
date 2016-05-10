@@ -8,3 +8,5 @@ To run:
 2. `cd catkin_ws` and `catkin_make`
 3. Relaunch your shell or re-source `.bashrc`
 4. `roslaunch voicebot voicebot.launch`
+
+Note - change the mic_name in the launch file to the specific computer's mic
