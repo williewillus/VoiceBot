@@ -37,7 +37,7 @@ class move_base_voice:
 
             has_direction = splitreq[1] == "backward" or splitreq[1] == "forward"
             negate = splitreq[1] == "backward"
-            dist_meters = 3
+            dist_meters = 1 
 
             if (not has_direction) or len(splitreq) > 2:
                 slice_start = 2 if has_direction else 1
