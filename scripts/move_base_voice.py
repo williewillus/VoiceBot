@@ -13,7 +13,6 @@ import tf
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 goalQueue = collections.deque()
-turtleQueue = collections.deque()
 numwords = {}
 
 # based on voice_cmd_vel
@@ -71,10 +70,6 @@ class move_base_voice:
             g.target_pose.pose.orientation.w = q[3]
             goalQueue.append(g)
 
-            t = Twist()
-            t.linear.x = dist_meters
-            turtleQueue.append(t)
-
         elif splitreq[0] == "turn":
             if len(splitreq) < 2:
                 return
@@ -105,10 +100,6 @@ class move_base_voice:
             g.target_pose.pose.orientation.z = q[2]
             g.target_pose.pose.orientation.w = q[3]
             goalQueue.append(g)
-
-            t = Twist()
-            t.angular.y = angle_rad * (-1 if negate else 1)
-
 
         elif splitreq[0] == "dance":
             for i in xrange(0, 4):
@@ -177,7 +168,6 @@ if __name__ == '__main__':
         move_base_voice()
         client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         client.wait_for_server()
-        turtle_pub = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
 
         while not rospy.is_shutdown():
             try:
@@ -186,13 +176,6 @@ if __name__ == '__main__':
                 g = goalQueue.popleft()
                 client.send_goal(g)
                 client.wait_for_result(rospy.Duration.from_sec(2.0))
-            except IndexError:
-                pass
-            try:
-                if len(turtleQueue) == 0:
-                    continue
-                twist = turtleQueue.popleft()
-                turtle_pub.publish(twist)
             except IndexError:
                 pass
     except rospy.ROSInterruptException:
